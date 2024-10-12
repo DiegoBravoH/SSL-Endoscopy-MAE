@@ -1,0 +1,18 @@
+__pycache__/
+utils/__pycache__/
+
+control quality/*
+
+data paper/*
+!data paper/supervised_gastrovision.csv
+!data paper/supervised_hyper-kvasir_23Categories.csv
+!data paper/supervised_hyper-kvasir_16Categories.csv
+
+demo/*
+!demo/Visualice Embedding.ipynb
+
+image_classification/*
+!image_classification/scripts/
+
+finetuning/*
+pretrained/* 
