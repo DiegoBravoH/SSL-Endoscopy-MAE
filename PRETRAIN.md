@@ -1,6 +1,6 @@
 ## Pre-training MAE
 
-To pre-train ViT-Large (recommended default) with **multi-node distributed training**, run the following on 8 nodes with 8 GPUs each:
+If you have multiple GPUs, it is recommended to use **multi-node distributed training** as the default:
 ```
 python submitit_pretrain.py \
     --job_dir ${JOB_DIR} \
@@ -15,6 +15,26 @@ python submitit_pretrain.py \
     --blr 1.5e-4 --weight_decay 0.05 \
     --data_path ${IMAGENET_DIR}
 ```
+If you have unique GPU, it is recommended to use:
+```
+python main_pretrain_presonalized.py ^
+  --batch_size 89 ^
+  --model mae_vit_large_patch16 ^
+  --norm_pix_loss ^
+  --mask_ratio 0.5 ^
+  --epochs 400 ^
+  --warmup_epochs 40 ^
+  --blr 1.5e-4 ^
+  --weight_decay 0.05 ^
+  --num_workers 4 ^
+  --data_path ${DATA_DIR} ^
+  --input_size 224 ^
+  --output_dir ${OUTPUT_DIR}  ^
+  --log_dir ${LOG_DIR}  ^
+  --resume ${LOAD_PRETRAINED_DIR} 
+
+```
+
 - Here the effective batch size is 64 (`batch_size` per gpu) * 8 (`nodes`) * 8 (gpus per node) = 4096. If memory or # gpus is limited, use `--accum_iter` to maintain the effective batch size, which is `batch_size` (per gpu) * `nodes` * 8 (gpus per node) * `accum_iter`.
 - `blr` is the base learning rate. The actual `lr` is computed by the [linear scaling rule](https://arxiv.org/abs/1706.02677): `lr` = `blr` * effective batch size / 256.
 - Here we use `--norm_pix_loss` as the target for better representation learning. To train a baseline model (e.g., for visualization), use pixel-based construction and turn off `--norm_pix_loss`.

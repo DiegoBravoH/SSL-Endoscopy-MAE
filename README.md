@@ -59,7 +59,7 @@ The following table provides the pre-trained checkpoints used in Table 1:
 |:--------------:|:----------:|:-----------:   |:--------:    |:--------:|:--------:|:-----:|
 | Gastrovison [1]    | 224x224    | 73.38          | 62.31        | 65.04    | 82,03    | 79,89 |
 | Ours (SSL)     | 224x224    | 74.47          | 75.64        | 87.57    | 85,37    | 83,69 |
-
+*Matthews correlation coefficient (MCC)
 ```
 @inproceedings{jha2023gastrovision,
   title={Gastrovision: A multi-class endoscopy image dataset for computer aided gastrointestinal disease detection},
@@ -73,11 +73,12 @@ The following table provides the pre-trained checkpoints used in Table 1:
 
 ### ✨ Image Classification - Hyperkvasir - 16 categories - Validation set fold 1
 
-| Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1 | Accuracy | ACC   |
+| Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1 | Accuracy | MCC   |
 |:--------------:|:----------:|:-----------:   |:--------:    |:--------:|:--------:|:-----:|
 | Han [3]            | 224x224    | 73.68          | 75.00        | 73.39    | 88.92    | -     |
 | Ours (SSL)     | 224x224    | 88.56          | 89.35        | 88.75    | 93.72    | 93.18 |
 
+*Matthews correlation coefficient (MCC)
 ```
 @article{guo2024improving,
   title={Improving image classification of gastrointestinal endoscopy using curriculum self-supervised learning},
@@ -93,11 +94,11 @@ The following table provides the pre-trained checkpoints used in Table 1:
 
 ### ✨ Image Classification - Hyperkvasir - 23 categories - Validation set fold 1
 
-| Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1 | Accuracy | ACC   |
+| Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1 | Accuracy | MCC   |
 |:--------------:|:----------:|:-----------:   |:--------:    |:--------:|:--------:|:-----:|
 | Hyperkvasir [2]    | 224x224    | 63.33          | 61.50        | 61.70    | 91.00    | 90.20 |
 | Ours (SSL)     | 224x224    | 74.09          | 63.97        | 64.06    | 91.10    | 90.35 |
-
+*Matthews correlation coefficient (MCC)
 ```
 @article{borgli2020hyperkvasir,
   title={HyperKvasir, a comprehensive multi-class image and video dataset for gastrointestinal endoscopy},
@@ -121,8 +122,7 @@ The following table provides the pre-trained checkpoints used in Table 1:
 
 
 ## 🔒 License
-
-The data is released fully open for research and educational purposes. The use of the dataset for purposes such as competitions purposes needs prior written permission. In all documents and papers that use or refer to the dataset or report experimental results based on the GastroHUN, a reference to the related article needs to be added and the data.
+This research study was conducted retrospectively using human subject data made available in open access. Ethical approval was not required as confirmed by the license attached with the open access data.
 
 
 ## ☎️ Contact 
@@ -130,6 +130,4 @@ The data is released fully open for research and educational purposes. The use o
 Diego Bravo: dbravoh@unal.edu.co
 
 ## 👍 Acknowledgements
-
-Universidad Nacional de Colombia <br>
 Hypekvasir and GastroVision authors :D
