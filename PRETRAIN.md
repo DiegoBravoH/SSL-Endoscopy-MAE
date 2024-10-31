@@ -1,22 +1,12 @@
 ## Pre-training MAE
 
-If you have multiple GPUs, it is recommended to use **multi-node distributed training** as the default:
-```
-python submitit_pretrain.py \
-    --job_dir ${JOB_DIR} \
-    --nodes 8 \
-    --use_volta32 \
-    --batch_size 64 \
-    --model mae_vit_large_patch16 \
-    --norm_pix_loss \
-    --mask_ratio 0.75 \
-    --epochs 800 \
-    --warmup_epochs 40 \
-    --blr 1.5e-4 --weight_decay 0.05 \
-    --data_path ${IMAGENET_DIR}
-```
 If you have unique GPU, it is recommended to use:
 ```
+OUTPUT_DIR ='..\mae_vit_large_scratch'
+LOG_DIR ='..\mae_vit_large_scratch' 
+DATA_PATH='..\data\Labeled Images'
+LOAD_PRETRAINED_DIR='..\mae_visualize_vit_large.pth'
+
 python main_pretrain_presonalized.py ^
   --batch_size 89 ^
   --model mae_vit_large_patch16 ^
@@ -34,7 +24,37 @@ python main_pretrain_presonalized.py ^
   --resume ${LOAD_PRETRAINED_DIR} 
 
 ```
+We chose to use the pre-trained weights available in `LOAD_PRETRAINED_DIR` for:
 
+### ✨ SSL 
+
+| Model                  | Checkpoint                        | Description                                                 |
+|:--------------:        |:----------:                       |:-----------:                                                |
+| ViT-Large (Pre-trained)| [Download](https://drive.google.com/uc?id=1rdBKa4vV9vtrASuMtnH3-26V0DvjF7kd)| Initial model checkpoint used for training in `LOAD_PRETRAINED_DIR` |
+| Ours (SSL)             | [Download](https://drive.google.com/uc?id=1A5gXzQBJc9XCRhZ8-E2GzghyS2IMHndG)| SSL-trained model after 400 epochs, saved in `OUTPUT_DIR`|
+
+#### Notes
+
+- The pre-trained models we provide are trained with *normalized* pixels `--norm_pix_loss`, which enhances representation quality, as shown in the [original paper MAE](https://arxiv.org/pdf/2111.06377). Deactivating `--norm_pix_loss` (using  *unnormalized*)improves visual reconstruction but reduces performance on downstream classification tasks [Download unnormalized model](https://osf.io/84e7f/).
+
+
+If you have multiple GPUs, it is recommended to use **multi-node distributed training** as the default:
+```
+python submitit_pretrain.py \
+    --job_dir ${JOB_DIR} \
+    --nodes 8 \
+    --use_volta32 \
+    --batch_size 64 \
+    --model mae_vit_large_patch16 \
+    --norm_pix_loss \
+    --mask_ratio 0.75 \
+    --epochs 800 \
+    --warmup_epochs 40 \
+    --blr 1.5e-4 --weight_decay 0.05 \
+    --data_path ${IMAGENET_DIR}
+```
+
+Taking from the original repository [linear scaling rule](https://github.com/facebookresearch/mae.git):
 - Here the effective batch size is 64 (`batch_size` per gpu) * 8 (`nodes`) * 8 (gpus per node) = 4096. If memory or # gpus is limited, use `--accum_iter` to maintain the effective batch size, which is `batch_size` (per gpu) * `nodes` * 8 (gpus per node) * `accum_iter`.
 - `blr` is the base learning rate. The actual `lr` is computed by the [linear scaling rule](https://arxiv.org/abs/1706.02677): `lr` = `blr` * effective batch size / 256.
 - Here we use `--norm_pix_loss` as the target for better representation learning. To train a baseline model (e.g., for visualization), use pixel-based construction and turn off `--norm_pix_loss`.

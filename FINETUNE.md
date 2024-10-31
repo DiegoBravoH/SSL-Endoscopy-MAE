@@ -1,38 +1,107 @@
 ## Fine-tuning Pre-trained MAE for Classification
 
-### Evaluation
+### ✨ Image Classification - GastroVision - 22 categories - Testing set
 
-As a sanity check, run evaluation using our ImageNet **fine-tuned** models:
+| Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1 | Accuracy | ACC   |
+|:--------------:|:----------:|:-----------:   |:------------:|:--------:|:--------:|:-----:|
+| Gastrovison [1]| 224x224    | 73,38          | 62,31        | 65,04    | 82,03    | 79,89 |
+| Ours (SSL)     | 224x224    | 74,47          | 75,69        | 87,37    | 85,37    | 83,69 |
 
-<table><tbody>
-<!-- START TABLE -->
-<!-- TABLE HEADER -->
-<th valign="bottom"></th>
-<th valign="bottom">ViT-Base</th>
-<th valign="bottom">ViT-Large</th>
-<th valign="bottom">ViT-Huge</th>
-<!-- TABLE BODY -->
-<tr><td align="left">fine-tuned checkpoint</td>
-<td align="center"><a href="https://dl.fbaipublicfiles.com/mae/finetune/mae_finetuned_vit_base.pth">download</a></td>
-<td align="center"><a href="https://dl.fbaipublicfiles.com/mae/finetune/mae_finetuned_vit_large.pth">download</a></td>
-<td align="center"><a href="https://dl.fbaipublicfiles.com/mae/finetune/mae_finetuned_vit_huge.pth">download</a></td>
-</tr>
-<tr><td align="left">md5</td>
-<td align="center"><tt>1b25e9</tt></td>
-<td align="center"><tt>51f550</tt></td>
-<td align="center"><tt>2541f2</tt></td>
-</tr>
-<tr><td align="left">reference ImageNet accuracy</td>
-<td align="center">83.664</td>
-<td align="center">85.952</td>
-<td align="center">86.928</td>
-</tr>
-</tbody></table>
+```
+PRETRAINED_DIR = "..\mae_vit_large\checkpoint-399.pth"
+DATA_PATH = "..\datasets"
+OUTPUT_DIR = "finetuning/GastroVision"
+LOG_DIR = "finetuning/GastroVision" 
 
-### Fine-tuning
+python main_finetune_gastrovision.py
+  --batch_size 50 ^
+  --model vit_large_patch16 ^
+  --finetune ${PRETRAINED_DIR} ^
+  --epochs 50 ^
+  --blr 1e-3 ^
+  --smoothing 0 ^
+  --num_workers 8 ^
+  --data_path ${DATA_PATH} ^
+  --output_dir ${OUTPUT_DIR}  ^
+  --log_dir ${LOG_DIR} ^
+  --nb_classes 22
+```
+Get our pre-trained checkpoints from here:
 
-Get our pre-trained checkpoints from [here](https://github.com/fairinternal/mae/#pre-trained-checkpoints).
+| Model                  | Checkpoint                        | Description               |
+|:--------------:        |:----------:                       |:-----------:              |
+| ViT-Large (pretrained) | [Download](https://drive.google.com/uc?id=1A5gXzQBJc9XCRhZ8-E2GzghyS2IMHndG)| Model trained at epoch 400| 
+| ViT-Large (finetuning) | [Download](https://drive.google.com/uc?id=1tLlzCu1OQRC_bDEwBraz5S4GqBZvwVww)| Model trained at epoch 50 | 
 
+### ✨ Image Classification - Hyperkvasir - 16 categories - Validation set fold 1 and fold 2 **official split**
+
+| Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1     | Accuracy    | MCC   |
+|:--------------:|:----------:|:--------------:|:--------:    |:------------:|:-----------:|:-----:|
+| Guo [2]        | 224x224    | 73,68 ± 0,20   | 75,00 ± 0,20 | 73,39 ± 0,30 | 88,92 ± 0,40| -     |
+| Ours (SSL)     | 224x224    | 88.56 ± 0,62   | 89.35 ±0,69  | 88.75 ± 0,65 | 93.72 ± 0,29| 93.18 ± 0,32|
+
+```
+PRETRAINED_DIR = "..\mae_vit_large\checkpoint-399.pth"
+DATA_PATH = "..\datasets"
+OUTPUT_DIR = "finetuning\hyper-kvasir\23 categories"
+LOG_DIR = "finetuning\hyper-kvasir\23 categories" 
+
+python main_finetune_hyperkvasir.py ^
+  --batch_size 50 ^
+  --model vit_large_patch16 ^
+  --finetune ${PRETRAINED_DIR} ^
+  --epochs 50 ^
+  --blr 1e-3 ^
+  --smoothing 0 ^
+  --num_workers 8 ^
+  --data_path ${DATA_PATH} ^
+  --output_dir ${OUTPUT_DIR} ^
+  --log_dir ${LOG_DIR} ^
+  --nb_classes 23
+```
+Get our pre-trained checkpoints from here:
+
+| Model                  | Checkpoint                        | Description               |
+|:--------------:        |:----------:                       |:-----------:              |
+| ViT-Large (pretrained) | [Download](https://drive.google.com/uc?id=1A5gXzQBJc9XCRhZ8-E2GzghyS2IMHndG)| Model trained at epoch 400| 
+| ViT-Large (finetuning fold 1) | [Download](https://drive.google.com/uc?id=17terVuGDmh6BqcGV7XE9o1xHgR5ivBUK)| Model trained at epoch 50 | 
+| ViT-Large (finetuning fold 2) | [Download](https://drive.google.com/uc?id=1bLj3OiRBrndPHCPRGpJcoCKI1Ds5I61p)| Model trained at epoch 50 | 
+
+### ✨ Image Classification - Hyperkvasir - 16 categories - Validation set fold 1 and fold 2 **official split**
+
+| Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1     | Accuracy    | MCC   |
+|:--------------:|:----------:|:--------------:|:--------:    |:------------:|:-----------:|:-----:|
+| Guo [2]        | 224x224    | 73,68 ± 0,20   | 75,00 ± 0,20 | 73,39 ± 0,30 | 88,92 ± 0,40| -     |
+| Ours (SSL)     | 224x224    | 88.56 ± 0,62   | 89.35 ±0,69  | 88.75 ± 0,65 | 93.72 ± 0,29| 93.18 ± 0,32|
+
+```
+PRETRAINED_DIR = "..\mae_vit_large\checkpoint-399.pth"
+DATA_PATH = "..\datasets"
+OUTPUT_DIR = "finetuning\hyper-kvasir\16 categories"
+LOG_DIR = "finetuning\hyper-kvasir\16 categories" 
+
+python main_finetune_hyperkvasir.py ^
+  --batch_size 50 ^
+  --model vit_large_patch16 ^
+  --finetune ${PRETRAINED_DIR} ^
+  --epochs 50 ^
+  --blr 1e-3 ^
+  --smoothing 0 ^
+  --num_workers 8 ^
+  --data_path ${DATA_PATH} ^
+  --output_dir ${OUTPUT_DIR} ^
+  --log_dir ${LOG_DIR} ^
+  --nb_classes 16
+```
+Get our pre-trained checkpoints from here:
+
+| Model                  | Checkpoint                        | Description               |
+|:--------------:        |:----------:                       |:-----------:              |
+| ViT-Large (pretrained) | [Download](https://drive.google.com/uc?id=1A5gXzQBJc9XCRhZ8-E2GzghyS2IMHndG)| Model trained at epoch 400| 
+| ViT-Large (finetuning fold 1) | [Download](https://drive.google.com/uc?id=1A5gXzQBJc9XCRhZ8-E2GzghyS2IMHndG)| Model trained at epoch 50 | 
+| ViT-Large (finetuning fold 2) | [Download](https://drive.google.com/uc?id=1SEe4DRNmUvbBZuiGEmBmEsY8rKBVGX-A)| Model trained at epoch 50 | 
+
+## Notes 
 To fine-tune with **multi-node distributed training**, run the following on 4 nodes with 8 GPUs each:
 ```
 python submitit_finetune.py \

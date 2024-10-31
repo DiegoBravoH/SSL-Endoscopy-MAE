@@ -16,3 +16,6 @@ image_classification/*
 
 finetuning/*
 pretrained/* 
+
+Notebooks/*
+!Notebooks/run_image_classification_prediction.ipynb

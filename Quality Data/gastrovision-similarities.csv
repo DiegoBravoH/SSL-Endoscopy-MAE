@@ -1,0 +1,4 @@
+,ssim,filename1,label1,loc1,filename2,label2,loc2
+0,0.9999616146087646,N2DaTmFs.jpg,Esophagitis,GastroVision\labeled-images\Esophagitis,WdSYgDiw.jpg,Normal esophagus,GastroVision\labeled-images\Normal esophagus
+2,0.9889957308769226,ckcbq0gs703hv0y4h735ha581.jpg,Accessory tools,GastroVision\labeled-images\Accessory tools,8f5dae06-df66-49e5-8a07-8447daf122e7.jpg,Gastric polyps,GastroVision\labeled-images\Gastric polyps
+1,0.9888463616371155,ckd8swai400083b5sn1693d25.jpg,Accessory tools,GastroVision\labeled-images\Accessory tools,f94c45b2-220d-4ed3-8826-81c8ccbbf6a2.jpg,Resected polyps,GastroVision\labeled-images\Resected polyps
