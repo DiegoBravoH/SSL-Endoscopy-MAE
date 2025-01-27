@@ -1,17 +1,28 @@
-## Fine-tuning Pre-trained MAE for Classification
+## Fine-tuning MAE for Classification
+
+Download our pre-trained SSL checkpoints to use in PRETRAINED_DIR for transfer learning and fine-tuning training:
+| Model                  | Checkpoint                        | Description               |
+|:--------------:        |:----------:                       |:-----------:              |
+| ViT-Large (pretrained) | [Download](https://drive.google.com/uc?id=1rdBKa4vV9vtrASuMtnH3-26V0DvjF7kd)| SSL(ImageNet)|
+| ViT-Large (pretrained) | [Download](https://drive.google.com/uc?id=1-9gRPPb_3LnXXd8nV4kG9WxrIFlMKCm3)| SSL(RandomW)| 
+| ViT-Large (Endocopy) | [Download](https://drive.google.com/uc?id=1zfOa9G7ZYxtqNM-z7gm5kxVNIg2b0nsJ)| **SSL(Endoscopy dataset)** masking ratio 50%|
 
 ### ✨ Image Classification - GastroVision - 22 categories - Testing set
 
-| Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1 | Accuracy | ACC   |
-|:--------------:|:----------:|:-----------:   |:------------:|:--------:|:--------:|:-----:|
-| Gastrovison [1]| 224x224    | 73,38          | 62,31        | 65,04    | 82,03    | 79,89 |
-| Ours (SSL)     | 224x224    | 74,47          | 75,69        | 87,37    | 85,37    | 83,69 |
+| Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1 | Accuracy | ACC   | Checkpoint   |
+|:--------------:|:----------:|:-----------:   |:------------:|:--------:|:--------:|:-----:|:-----:|
+| Gastrovison [1]| 224x224    | 73.38          | 62.31        | 65.04    | 82.03    | 79.89 | **see reference**   |
+| SSL(RandomW)     | 224x224    | 38.41         | 43.53        | 38.65     | 50.06    | 45.98 |[Download](https://drive.google.com/uc?id=15CQuQZgpaRgH3yJ35MtHx6_ve4eSBaen)| SSL(ImageNet)   |
+| SSL(ImageNet)     | 224x224    | 73.96         | 70.28        | 70.32   | 82.72    | 80.74 |[Download](https://drive.google.com/uc?id=1y37dLMDrTjMudkGM8XnnwpDIk5jtx3UL)   |
+| SSL(EN)     | 224x224    | 74.01          | 79.20        | 75.72    | 84.44    | 82.78 |[Download](https://drive.google.com/uc?id=1pumFg8Q-78RrSJof05GGUCGiuVheRGiT)   |
+| SSL(EN)+prepro.     | 224x224    | **75.13**         | **81.78**        | **77.40**    | **84.63**    | **83.02** |[Download](https://drive.google.com/uc?id=1jLPsxvXSFZBiYeoQqptQv3rT9V0pS1h6)    |
 
 ```
-PRETRAINED_DIR = "..\mae_vit_large\checkpoint-399.pth"
+PRETRAINED_DIR = "..\mae_vit_large\mask_ratio0.5\checkpoint-399.pth"
 DATA_PATH = "..\datasets"
-OUTPUT_DIR = "finetuning/GastroVision"
-LOG_DIR = "finetuning/GastroVision" 
+SPLIT_PATH = "..\datasets\supervised_gastrovision.csv"
+OUTPUT_DIR = "finetuning\GastroVision"
+LOG_DIR = "finetuning\GastroVision" 
 
 python main_finetune_gastrovision.py
   --batch_size 50 ^
@@ -22,31 +33,31 @@ python main_finetune_gastrovision.py
   --smoothing 0 ^
   --num_workers 8 ^
   --data_path ${DATA_PATH} ^
+  --official_split ${SPLIT_PATH} ^
   --output_dir ${OUTPUT_DIR}  ^
   --log_dir ${LOG_DIR} ^
   --nb_classes 22
 ```
-Get our pre-trained checkpoints from here:
-
-| Model                  | Checkpoint                        | Description               |
-|:--------------:        |:----------:                       |:-----------:              |
-| ViT-Large (pretrained) | [Download](https://drive.google.com/uc?id=1A5gXzQBJc9XCRhZ8-E2GzghyS2IMHndG)| Model trained at epoch 400| 
-| ViT-Large (finetuning) | [Download](https://drive.google.com/uc?id=1tLlzCu1OQRC_bDEwBraz5S4GqBZvwVww)| Model trained at epoch 50 | 
 
 ### ✨ Image Classification - Hyperkvasir - 16 categories - Validation set fold 1 and fold 2 **official split**
 
-| Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1     | Accuracy    | MCC   |
-|:--------------:|:----------:|:--------------:|:--------:    |:------------:|:-----------:|:-----:|
-| Guo [2]        | 224x224    | 73,68 ± 0,20   | 75,00 ± 0,20 | 73,39 ± 0,30 | 88,92 ± 0,40| -     |
-| Ours (SSL)     | 224x224    | 88.56 ± 0,62   | 89.35 ±0,69  | 88.75 ± 0,65 | 93.72 ± 0,29| 93.18 ± 0,32|
+| Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1     | Accuracy    | MCC   |Checkpoint   |
+|:--------------:|:----------:|:--------------:|:--------:    |:------------:|:-----------:|:-----:|:-----:|
+| Guo [2]        | 224x224    | 73.68 ±0.20   | 75.00 ±0.20 | 73.39 ±0.30 | 88.92 ±0.40| -     |view the paper     |
+| SSL(RandomW)     | 224x224    | 70.92 ±0.44    | 73.81 ±0.57  | 71.79 ± ±0.32 | 78.57 ±0.05| 76.80 ±0.11|[fold1](https://drive.google.com/uc?id=15nkD62j7ySGil-6LiYEdfJ_vxIcOkgrh) [fold2](https://drive.google.com/uc?id=1L-AfJFUJLV1-0PEKnNx_wfjG5lmYVCAe)    |
+| SSL(ImageNet)    | 224x224    | 86.20 ±0.20   | 87.56 ±0.11  | 86.77 ± 0.13 | 92.49 ±0.33| 91.83 ±0.36|[fold1](https://drive.google.com/uc?id=1LeuSLtjY_tJgBfmJal57ckSOkJu5qaXB) [fold2](https://drive.google.com/uc?id=1eJ9pB2Uwbz421ze3TkkfYEgc-NUoD7s5)     |
+| SS(EN)+quality     | 224x224    | **89.09 ±0.58**   | **89.86 ±0.79**  | **89.23 ±0.03** | **93.74 ±0.11**| **93.19 ±0.12**|a b    |
+| SSL(EN)     | 224x224    | 87.63 ±0.36   | 89.32 ±0.15  | 88.23 ±0.20 | 93.50 ±0.30| 92.94 ± 0.33|[fold1](https://drive.google.com/uc?id=14k8j0ejzLSHdpY3VrL7AQ6bSZGoynNJc) [fold2](https://drive.google.com/uc?id=1ldKddgjg6HNfSdQ0N_scPVhAnVxdQndp)     |
+
 
 ```
-PRETRAINED_DIR = "..\mae_vit_large\checkpoint-399.pth"
+PRETRAINED_DIR = "..\mae_vit_large\mask_ratio0.5\checkpoint-399.pth"
 DATA_PATH = "..\datasets"
-OUTPUT_DIR = "finetuning\hyper-kvasir\23 categories"
-LOG_DIR = "finetuning\hyper-kvasir\23 categories" 
+SPLIT_PATH = "..\datasets\supervised_hyper-kvasir_16Categories_fold1.csv" 
+OUTPUT_DIR = "finetuning\hyper-kvasir"
+LOG_DIR = "finetuning\hyper-kvasir" 
 
-python main_finetune_hyperkvasir.py ^
+python main_finetune_hyperkvasir.py
   --batch_size 50 ^
   --model vit_large_patch16 ^
   --finetune ${PRETRAINED_DIR} ^
@@ -55,93 +66,45 @@ python main_finetune_hyperkvasir.py ^
   --smoothing 0 ^
   --num_workers 8 ^
   --data_path ${DATA_PATH} ^
-  --output_dir ${OUTPUT_DIR} ^
-  --log_dir ${LOG_DIR} ^
-  --nb_classes 23
-```
-Get our pre-trained checkpoints from here:
-
-| Model                  | Checkpoint                        | Description               |
-|:--------------:        |:----------:                       |:-----------:              |
-| ViT-Large (pretrained) | [Download](https://drive.google.com/uc?id=1A5gXzQBJc9XCRhZ8-E2GzghyS2IMHndG)| Model trained at epoch 400| 
-| ViT-Large (finetuning fold 1) | [Download](https://drive.google.com/uc?id=17terVuGDmh6BqcGV7XE9o1xHgR5ivBUK)| Model trained at epoch 50 | 
-| ViT-Large (finetuning fold 2) | [Download](https://drive.google.com/uc?id=1bLj3OiRBrndPHCPRGpJcoCKI1Ds5I61p)| Model trained at epoch 50 | 
-
-### ✨ Image Classification - Hyperkvasir - 16 categories - Validation set fold 1 and fold 2 **official split**
-
-| Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1     | Accuracy    | MCC   |
-|:--------------:|:----------:|:--------------:|:--------:    |:------------:|:-----------:|:-----:|
-| Guo [2]        | 224x224    | 73,68 ± 0,20   | 75,00 ± 0,20 | 73,39 ± 0,30 | 88,92 ± 0,40| -     |
-| Ours (SSL)     | 224x224    | 88.56 ± 0,62   | 89.35 ±0,69  | 88.75 ± 0,65 | 93.72 ± 0,29| 93.18 ± 0,32|
-
-```
-PRETRAINED_DIR = "..\mae_vit_large\checkpoint-399.pth"
-DATA_PATH = "..\datasets"
-OUTPUT_DIR = "finetuning\hyper-kvasir\16 categories"
-LOG_DIR = "finetuning\hyper-kvasir\16 categories" 
-
-python main_finetune_hyperkvasir.py ^
-  --batch_size 50 ^
-  --model vit_large_patch16 ^
-  --finetune ${PRETRAINED_DIR} ^
-  --epochs 50 ^
-  --blr 1e-3 ^
-  --smoothing 0 ^
-  --num_workers 8 ^
-  --data_path ${DATA_PATH} ^
-  --output_dir ${OUTPUT_DIR} ^
+  --official_split ${SPLIT_PATH} ^
+  --output_dir ${OUTPUT_DIR}  ^
   --log_dir ${LOG_DIR} ^
   --nb_classes 16
 ```
-Get our pre-trained checkpoints from here:
+SPLIT_PATH = supervised_hyper-kvasir_16Categories_fold1.csv or supervised_hyper-kvasir_16Categories_fold2.csv or supervised_hyper-kvasir_16Categories_fold1_filt.csv or supervised_hyper-kvasir_16Categories_fold2_filt.csv. 
 
-| Model                  | Checkpoint                        | Description               |
-|:--------------:        |:----------:                       |:-----------:              |
-| ViT-Large (pretrained) | [Download](https://drive.google.com/uc?id=1A5gXzQBJc9XCRhZ8-E2GzghyS2IMHndG)| Model trained at epoch 400| 
-| ViT-Large (finetuning fold 1) | [Download](https://drive.google.com/uc?id=1A5gXzQBJc9XCRhZ8-E2GzghyS2IMHndG)| Model trained at epoch 50 | 
-| ViT-Large (finetuning fold 2) | [Download](https://drive.google.com/uc?id=1SEe4DRNmUvbBZuiGEmBmEsY8rKBVGX-A)| Model trained at epoch 50 | 
 
-## Notes 
-To fine-tune with **multi-node distributed training**, run the following on 4 nodes with 8 GPUs each:
+### ✨ Image Classification - Hyperkvasir - 23 categories - Validation set fold 1 and fold 2 **official split**
+
+| Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1    | Accuracy    | MCC   | MCC   |
+|:--------------:|:----------:|:--------------:|:--------:    |:-----------:|:-----------:|:-----:|:-----:|
+| Borgoli [3]    | 224x224    | 63.30          | 61.50        | 61.70       | 91.00       | 90.20        |view paper        |
+| SSL(RandomW)     | 224x224    | 47.55 ±1.28   | 50.48 ±0.57 | 47.57 ±0.94| 72.16 ±0.45| 70.08 ±0.55 |[fold1](https://drive.google.com/uc?id=1wI8tQmozR8K3Ye8veUfATjciYd8mctu3) [fold2](https://drive.google.com/uc?id=1io8Zg7Exa7ep--Un5ZW8P7p0L9mdyUsI)        |
+| SSL(ImageNet)    | 224x224    | **73.01 ±3.01**    | 63.15 ±0.76 | 62.01 ±0.40| 89.64 ±0.31| 88.77 ±0.33 |[fold1](https://drive.google.com/uc?id=1wI8tQmozR8K3Ye8veUfATjciYd8mctu3) [fold2](https://drive.google.com/uc?id=1L4ptZCYz-NS1rmXoymzg4G1SucC2gQJe)        |
+| SSL(EN)+quality     | 224x224    | 71.31 ±3.09   | 65.99 ±0.37 | 64.68 ±0.39 | 90.85 ±0.67| 90.11 ±0.71 |[fold1](https://drive.google.com/uc?id=1cyhJjvJqDPkw99ZF1fg1d5M26hjlZ8Bb) [fold2](https://drive.google.com/uc?id=1ohK0MgfzfiYzwp97KPU2h0gJhwJJuLKJ)|
+| SSL(EN)     | 224x224    | 67.96 ±2.93   | **66.41 ±0.41** | **65.73 ±0.39**| **91.00 ±0.04** | **90.25 ±0.04** |[fold1](https://drive.google.com/uc?id=1sVb09fUy-Aj55xgP11WwV8o6bujhia12) [fold2](https://drive.google.com/uc?id=166CrTd7tOhhvNA1X7PyPdoQdFRdIa-aR) | 
+
+
 ```
-python submitit_finetune.py \
-    --job_dir ${JOB_DIR} \
-    --nodes 4 \
-    --batch_size 32 \
-    --model vit_base_patch16 \
-    --finetune ${PRETRAIN_CHKPT} \
-    --epochs 100 \
-    --blr 5e-4 --layer_decay 0.65 \
-    --weight_decay 0.05 --drop_path 0.1 --reprob 0.25 --mixup 0.8 --cutmix 1.0 \
-    --dist_eval --data_path ${IMAGENET_DIR}
+PRETRAINED_DIR = "..\mae_vit_large\mask_ratio0.5\checkpoint-399.pth"
+DATA_PATH = "..\datasets"
+SPLIT_PATH = "..\datasets\supervised_hyper-kvasir_23Categories_fold1.csv" 
+OUTPUT_DIR = "finetuning\hyper-kvasir"
+LOG_DIR = "finetuning\hyper-kvasir" 
+
+python main_finetune_hyperkvasir.py
+  --batch_size 50 ^
+  --model vit_large_patch16 ^
+  --finetune ${PRETRAINED_DIR} ^
+  --epochs 50 ^
+  --blr 1e-3 ^
+  --smoothing 0 ^
+  --num_workers 8 ^
+  --data_path ${DATA_PATH} ^
+  --official_split ${SPLIT_PATH} ^
+  --output_dir ${OUTPUT_DIR}  ^
+  --log_dir ${LOG_DIR} ^
+  --nb_classes 23
 ```
-- Install submitit (`pip install submitit`) first.
-- Here the effective batch size is 32 (`batch_size` per gpu) * 4 (`nodes`) * 8 (gpus per node) = 1024.
-- `blr` is the base learning rate. The actual `lr` is computed by the [linear scaling rule](https://arxiv.org/abs/1706.02677): `lr` = `blr` * effective batch size / 256.
-- We have run 4 trials with different random seeds. The resutls are 83.63, 83.66, 83.52, 83.46 (mean 83.57 and std 0.08).
-- Training time is ~7h11m in 32 V100 GPUs.
 
-Script for ViT-Large:
-```
-python submitit_finetune.py \
-    --job_dir ${JOB_DIR} \
-    --nodes 4 --use_volta32 \
-    --batch_size 32 \
-    --model vit_large_patch16 \
-    --finetune ${PRETRAIN_CHKPT} \
-    --epochs 50 \
-    --blr 1e-3 --layer_decay 0.75 \
-    --weight_decay 0.05 --drop_path 0.2 --reprob 0.25 --mixup 0.8 --cutmix 1.0 \
-    --dist_eval --data_path ${IMAGENET_DIR}
-```
-- We have run 4 trials with different random seeds. The resutls are 85.95, 85.87, 85.76, 85.88 (mean 85.87 and std 0.07).
-- Training time is ~8h52m in 32 V100 GPUs.
-- Here the effective batch size is 32 (`batch_size` per gpu) * 4 (`accum_iter`) * 8 (gpus) = 1024. `--accum_iter 4` simulates 4 nodes.
-
-#### Notes
-
-- The [pre-trained models we provide](https://github.com/fairinternal/mae/#pre-trained-checkpoints) are trained with *normalized* pixels `--norm_pix_loss` (1600 epochs, Table 3 in paper). The fine-tuning hyper-parameters are slightly different from the default baseline using *unnormalized* pixels.
-
-- The original MAE implementation was in TensorFlow+TPU with no explicit mixed precision. This re-implementation is in PyTorch+GPU with automatic mixed precision (`torch.cuda.amp`). We have observed different numerical behavior between the two platforms. In this repo, we use `--global_pool` for fine-tuning; using `--cls_token` performs similarly, but there is a chance of producing NaN when fine-tuning ViT-Huge in GPUs. We did not observe this issue in TPUs. Turning off amp could solve this issue, but is slower.
-
-- Here we use RandErase following DeiT: `--reprob 0.25`. Its effect is smaller than random variance.
+SPLIT_PATH = supervised_hyper-kvasir_23Categories_fold1.csv or supervised_hyper-kvasir_23Categories_fold2.csv or supervised_hyper-kvasir_23Categories_fold1_filt.csv or supervised_hyper-kvasir_23Categories_fold2_filt.csv. 

@@ -4,18 +4,41 @@ utils/__pycache__/
 control quality/*
 
 data paper/*
+!data paper/self_supervised.csv
+
 !data paper/supervised_gastrovision.csv
-!data paper/supervised_hyper-kvasir_23Categories.csv
-!data paper/supervised_hyper-kvasir_16Categories.csv
+
+!data paper/supervised_hyper-kvasir_16Categories_fold1.csv
+!data paper/supervised_hyper-kvasir_16Categories_fold2.csv
+
+!data paper/supervised_hyper-kvasir_16Categories_fold1_filt.csv
+!data paper/supervised_hyper-kvasir_16Categories_fold2_filt.csv
+
+!data paper/supervised_hyper-kvasir_23Categories_fold1.csv
+!data paper/supervised_hyper-kvasir_23Categories_fold2.csv
+
 
 demo/*
 !demo/Visualice Embedding.ipynb
 
-image_classification/*
-!image_classification/scripts/
 
 finetuning/*
 pretrained/* 
+predictions/*
+ISBI_finetuning/*
+ISBI_pretrained/* 
+
+util/*
+!lars.py
+!lr_decay.py
+!datasets.py
+!crop.py
+!pos_embed.py
+!misc.py
+!lr_sched.py
+
+.ipynb_checkpoints/*
+Random weights MAE.ipynb
 
 Notebooks/*
 !Notebooks/run_image_classification_prediction.ipynb

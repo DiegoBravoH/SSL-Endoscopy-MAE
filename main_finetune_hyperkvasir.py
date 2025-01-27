@@ -1,14 +1,3 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
-
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
-# --------------------------------------------------------
-# References:
-# DeiT: https://github.com/facebookresearch/deit
-# BEiT: https://github.com/microsoft/unilm/tree/master/beit
-# --------------------------------------------------------
-
 import argparse
 import datetime
 import json
@@ -29,21 +18,24 @@ from sklearn.utils.class_weight import compute_class_weight
 
 import timm
 
-assert timm.__version__ == "0.3.2" # version check
+#assert timm.__version__ == "0.3.2" # version check
 from timm.models.layers import trunc_normal_
 from timm.data.mixup import Mixup
 from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy
 
 import util.lr_decay as lrd
-import util.misc as misc
+#import util.misc as misc
+import ISBI_misc as misc
 from util.datasets import build_dataset
 from util.pos_embed import interpolate_pos_embed
-from util.misc import NativeScalerWithGradNormCount as NativeScaler
+#from util.misc import NativeScalerWithGradNormCount as NativeScaler
+from ISBI_misc import NativeScalerWithGradNormCount as NativeScaler
 import random
 
 import models_vit
 
-from engine_finetune import train_one_epoch, evaluate
+#from engine_finetune import train_one_epoch, evaluate
+from ISBI_engine_finetune import train_one_epoch, evaluate
 
 
 def get_args_parser():
@@ -126,6 +118,8 @@ def get_args_parser():
     # Dataset parameters
     parser.add_argument('--data_path', default='/datasets01/imagenet_full_size/061417/', type=str,
                         help='dataset path')
+    parser.add_argument('--official_split', default='/datasets01/imagenet_full_size/061417/', type=str,
+                        help='dataset path')
     parser.add_argument('--nb_classes', default=1000, type=int,
                         help='number of the classification types')
 
@@ -186,6 +180,7 @@ class CustomDataset(Dataset):
                 set_type = data["set_type"].loc[sample]  
                 label = data["GT"].loc[sample] 
                 path_img = os.path.join(path_root_db, data["loc"].loc[sample], data["filename"].loc[sample])
+                path_img = path_img.replace('\\', '/')
                 self.imgs.append((path_img, label, set_type))
             except KeyError:
                 print(f"Label {path_img} not found in labels_DB. Skipping index {sample}.")
@@ -219,13 +214,13 @@ def main(args):
     cudnn.benchmark = True
 
 # categories
-    data = pd.read_csv(os.path.join(args.data_path, "supervised_hyper-kvasir_SData.csv"), index_col=0) 
+    data = pd.read_csv(args.official_split, index_col=0)     
     data["GT"] = data["GT"].astype(np.int64)    
     
     print("=================")
     print(len(data))
     #[0.5559, 0.3893, 0.3246], [0.2832, 0.2090, 0.2030]
-    # Definir las transformaciones
+    # Transforms
     data_transforms = {
         'Train': transforms.Compose([
             transforms.Resize((224, 224)),
@@ -379,6 +374,7 @@ def main(args):
 
     print(f"Start training for {args.epochs} epochs")
     start_time = time.time()
+    best_f1_macro = 0.0  # Inicializar el mejor F1 macro
     max_accuracy = 0.0
     for epoch in range(args.start_epoch, args.epochs):
         if args.distributed:
@@ -390,15 +386,28 @@ def main(args):
             log_writer=log_writer,
             args=args
         )
-        if args.output_dir:
-            misc.save_model(
-                args=args, model=model, model_without_ddp=model_without_ddp, optimizer=optimizer,
-                loss_scaler=loss_scaler, epoch=epoch)
-
         test_stats = evaluate(data_loader_val, model, device)
+        # Obtener F1 macro
+        current_f1_macro = test_stats['f1_macro']
+        print(f"Epoch {epoch}: Val F1 Macro = {current_f1_macro:.4f}")
+        
         print(f"Accuracy of the network on the {len(dataset_val)} test images: {test_stats['acc1']:.1f}%")
         max_accuracy = max(max_accuracy, test_stats["acc1"])
-        print(f'Max accuracy: {max_accuracy:.2f}%')
+        print(f'Max accuracy: {max_accuracy:.2f}%') 
+
+        # Guardar si es el mejor modelo
+        if current_f1_macro > best_f1_macro:
+            best_f1_macro = current_f1_macro
+            print(f"New best F1 Macro: {best_f1_macro:.4f}. Saving model...")
+            misc.save_model(
+                args=args,
+                epoch=epoch,
+                model=model,
+                model_without_ddp=model_without_ddp,
+                optimizer=optimizer,
+                loss_scaler=loss_scaler,
+                is_best=True  # Indica que este es el mejor modelo
+            )
 
         if log_writer is not None:
             log_writer.add_scalar('perf/test_acc1', test_stats['acc1'], epoch)

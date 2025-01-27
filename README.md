@@ -1,11 +1,11 @@
-# Self-Supervised Learning for Gastrointestinal Endoscopy: Improving Classification and Data Quality with Masked Autoencoders
+# Self-Supervised Learning for Multi-Category Endoscopy classification and Data Quality evaluation Using Masked Autoencoders
 ## Pipeline
 
 <p align="center">
   <img src="figs/Pipeline_GI.jpg" alt="GastroUNAL" width="700">
 </p>
 
-Overview of the proposed self-supervised methodology: (I) **Pre-training:** A large portion of image patches (50%) is randomly masked. The encoder processes the visible patches, and mask tokens are introduced after the encoder. The combined encoded patches and mask tokens are fed into a decoder to reconstruct the original image. (II) **Supervised Training:** The decoder is removed, and the pre-trained encoder is fine-tuned to classify images into specific categories across four groups: normal, anatomical, pathological, and therapeutic.
+Overview of the proposed self-supervised methodology: (I) **Pre-training:** A large portion of image patches (i.e $50\%$) is randomly masked. The encoder processes the visible patches, and mask tokens are introduced after the encoder. The combined encoded patches and mask tokens are fed into a decoder to reconstruct the original image. (II) **Supervised Training:** The decoder is removed, and the pre-trained encoder is fine-tuned to classify images into specific categories within EN images, spanning normal, anatomical, pathological, and therapeutic regions, with category definitions varying by dataset.
 
 ## Dataset Overview
 
@@ -58,8 +58,12 @@ The following table provides the pre-trained checkpoints used in Table 1:
 
 | Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1 | Accuracy | ACC   |
 |:--------------:|:----------:|:-----------:   |:------------:|:--------:|:--------:|:-----:|
-| Gastrovison [1]| 224x224    | 73,38          | 62,31        | 65,04    | 82,03    | 79,89 |
-| Ours (SSL)     | 224x224    | 74,47          | 75,69        | 87,37    | 85,37    | 83,69 |
+| Gastrovison [1]| 224x224    | 73.38          | 62.31        | 65.04    | 82.03    | 79.89 |
+| SSL(RandomW)     | 224x224    | 38.41         | 43.53        | 38.65     | 50.06    | 45.98 |
+| SSL(ImageNet)     | 224x224    | 73.96         | 70.28        | 70.32   | 82.72    | 80.74 |
+| SSL(EN)     | 224x224    | 74.01          | 79.20        | 75.72    | 84.44    | 82.78 |
+| SSL(EN)+prepro.     | 224x224    | **75.13**         | **81.78**        | **77.40**    | **84.63**    | **83.02** |
+
 
 *Matthews correlation coefficient (MCC)
 ```
@@ -78,8 +82,12 @@ The following table provides the pre-trained checkpoints used in Table 1:
 
 | Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1     | Accuracy    | MCC   |
 |:--------------:|:----------:|:--------------:|:--------:    |:------------:|:-----------:|:-----:|
-| Guo [2]        | 224x224    | 73,68 ± 0,20   | 75,00 ± 0,20 | 73,39 ± 0,30 | 88,92 ± 0,40| -     |
-| Ours (SSL)     | 224x224    | 88.56 ± 0,62   | 89.35 ±0,69  | 88.75 ± 0,65 | 93.72 ± 0,29| 93.18 ± 0,32|
+| Guo [2]        | 224x224    | 73.68 ±0.20   | 75.00 ±0.20 | 73.39 ±0.30 | 88.92 ±0.40| -     |
+| SSL(RandomW)     | 224x224    | 70.92 ±0.44    | 73.81 ±0.57  | 71.79 ± ±0.32 | 78.57 ±0.05| 76.80 ±0.11|
+| SSL(ImageNet)    | 224x224    | 86.20 ±0.20   | 87.56 ±0.11  | 86.77 ± 0.13 | 92.49 ±0.33| 91.83 ±0.36|
+| SS(EN)+quality     | 224x224    | **89.09 ±0.58**   | **89.86 ±0.79**  | **89.23 ±0.03** | **93.74 ±0.11**| **93.19 ±0.12**|
+| SSL(EN)     | 224x224    | 87.63 ±0.36   | 89.32 ±0.15  | 88.23 ±0.20 | 93.50 ±0.30| 92.94 ± 0.33|
+
 
 *Matthews correlation coefficient (MCC) 
 ```
@@ -102,7 +110,11 @@ The following table provides the pre-trained checkpoints used in Table 1:
 | Backbone       | Resolution |Macro Precision | Macro Recall | Macro F1    | Accuracy    | MCC   |
 |:--------------:|:----------:|:--------------:|:--------:    |:-----------:|:-----------:|:-----:|
 | Borgoli [3]    | 224x224    | 63.30          | 61.50        | 61.70       | 91.00       | 90.20        |
-| Ours (SSL)     | 224x224    | 74.09 ± 2,61   | 63.97 ± 0,41 | 64.06 ± 0,12| 91.10 ± 0,23| 90.35 ± 0,25 |
+| SSL(RandomW)     | 224x224    | 47.55 ±1.28   | 50.48 ±0.57 | 47.57 ±0.94| 72.16 ±0.45| 70.08 ±0.55 |
+| SSL(ImageNet)    | 224x224    | **73.01 ±3.01**    | 63.15 ±0.76 | 62.01 ±0.40| 89.64 ±0.31| 88.77 ±0.33 |
+| SSL(EN)+quality     | 224x224    | 71.31 ±3.09   | 65.99 ±0.37 | 64.68 ±0.39 | 90.85 ±0.67| 90.11 ±0.71 |
+| SSL(EN)     | 224x224    | 67.96 ±2.93   | **66.41 ±0.41** | **65.73 ±0.39**| **91.00 ±0.04** | **90.25 ±0.04** |
+
 
 *Matthews correlation coefficient (MCC)
 ```
